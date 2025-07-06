@@ -418,22 +418,150 @@ function approve(index){
 function reject(index){
   alert('Pembayaran ditolak: '+payments[index].name);
   payments.splice(index,1);
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Website RiyanZx</title>
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<style>
+  /* styling sama seperti sebelumnya (biar rapi) */
+  body {margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f4f9fd;color:#333;}
+  .navbar {background:linear-gradient(90deg,#00c6ff,#0072ff);display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;color:#fff;}
+  .navbar-left {display:flex;align-items:center;}
+  .logo-img {width:40px;height:40px;border-radius:50%;margin-right:0.5rem;}
+  .menu {font-size:1.7rem;cursor:pointer;}
+  .sidebar {position:fixed;top:0;right:-260px;width:260px;height:100%;background:#fff;box-shadow:-2px 0 8px rgba(0,0,0,0.1);transition:right 0.3s ease;}
+  .sidebar-header {display:flex;align-items:center;padding:1rem;border-bottom:1px solid #eee;}
+  .sidebar-header img {width:40px;height:40px;border-radius:50%;margin-right:0.7rem;}
+  .sidebar a {display:block;padding:1rem;text-decoration:none;color:#333;border-bottom:1px solid #eee;}
+  .sidebar a:hover {background:#f0f0f0;}
+  .page {display:none;padding:2rem;text-align:center;}
+  button {padding:0.6rem 1.2rem;background:#0072ff;color:#fff;border:none;border-radius:0.4rem;font-weight:bold;cursor:pointer;}
+  .product {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;max-width:400px;}
+  input {width:90%;max-width:300px;padding:0.5rem;margin:0.5rem auto;border:1px solid #ccc;border-radius:0.4rem;}
+  .method-info {margin-top:1rem;font-size:0.9rem;color:#555;}
+  .payment-entry {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;}
+  .payment-entry img {width:100px;height:auto;cursor:pointer;border:1px solid #ccc;border-radius:4px;}
+  .modal {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:1000;}
+  .modal img {max-width:90%;border-radius:6px;}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="navbar-left">
+    <img src="https://files.catbox.moe/1fodlk.jpg" class="logo-img">
+    <h1>RiyanZx</h1>
+  </div>
+  <div class="menu" onclick="toggleSidebar()">&#9776;</div>
+</div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://files.catbox.moe/1fodlk.jpg">
+    <span>RiyanZx</span>
+  </div>
+  <a href="#" onclick="showDashboard()">Dashboard</a>
+  <a href="#" onclick="showProducts()">Produk</a>
+  <a href="#" onclick="showPayment()">Pembayaran</a>
+  <a href="#" onclick="showAdminLogin()">Admin</a>
+  <a href="#" onclick="closeSidebar()">Tutup Menu</a>
+</div>
+
+<div class="page" id="dashboardPage" style="display:block;">
+  <h2>Selamat Datang di Website RiyanZx</h2>
+  <div class="contact-buttons">
+    <a href="https://wa.me/6285793901218" target="_blank">WhatsApp</a>
+    <a href="https://t.me/RiyanZxDev" target="_blank">Telegram</a>
+  </div>
+</div>
+
+<div class="page" id="productsPage">
+  <h2>Produk Kami</h2>
+  <div class="product">
+    <h3>Panel Unli 5K</h3>
+    <p>Harga: Rp5.000</p>
+    <button onclick="buyViaWA('Panel Unli 5K')">Beli via WA</button>
+  </div>
+  <div class="product">
+    <h3>Script Kayzen V5</h3>
+    <p>Harga: Rp15.000</p>
+    <button onclick="buyViaWA('Script Kayzen V5')">Beli via WA</button>
+  </div>
+</div>
+
+<div class="page" id="paymentPage">
+  <h2>Form Pembayaran</h2>
+  <input type="text" id="payerName" placeholder="Nama Lengkap">
+  <input type="text" id="payerWhatsapp" placeholder="Nomor WhatsApp">
+  <input type="text" id="payerDescription" placeholder="Deskripsi Pembelian">
+  <input type="number" id="payerAmount" placeholder="Nominal (Rp)">
+  <div class="method-info" id="methodInfo"></div>
+  <input type="file" id="proofUpload" accept="image/*">
+  <button onclick="submitPayment()">Kirim Pembayaran</button>
+</div>
+
+<div class="page" id="adminLoginPage">
+  <h2>Login Admin</h2>
+  <input type="password" id="adminPassword" placeholder="Password">
+  <button onclick="checkAdminPassword()">Login</button>
+</div>
+
+<div class="page" id="adminPage">
+  <h2>Admin Dashboard</h2>
+  <div id="paymentList"></div>
+  <button onclick="showDashboard()">Keluar</button>
+</div>
+
+<div class="modal" id="imageModal" onclick="closeModal()">
+  <img id="modalImage">
+</div>
+
+<script>
+// EmailJS init
+emailjs.init("YOUR_PUBLIC_KEY"); // Ganti YOUR_PUBLIC_KEY
+
+let payments = [];
+
+function toggleSidebar(){...} // Sama seperti sebelumnya
+function closeSidebar(){...}
+function hideAll(){...}
+function showDashboard(){...}
+function showProducts(){...}
+function showPayment(){...}
+function showAdminLogin(){...}
+function checkAdminPassword(){...}
+function buyViaWA(product){window.open(`https://wa.me/6285793901218?text=Halo%20kak%2C%20mau%20beli%20${encodeURIComponent(product)}`);}
+
+function submitPayment(){
+  const n=document.getElementById('payerName').value;
+  const w=document.getElementById('payerWhatsapp').value;
+  const d=document.getElementById('payerDescription').value;
+  const a=document.getElementById('payerAmount').value;
+  const p=document.getElementById('proofUpload').files[0];
+  if(!n||!w||!d||!a||!p){alert('Lengkapi semua field!');return;}
+  // EmailJS send
+  emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{name:n, whatsapp:w, description:d, amount:a})
+  .then(()=>alert("Pembayaran dikirim & notifikasi email terkirim!"))
+  .catch(e=>alert("Gagal kirim email: "+JSON.stringify(e)));
+  // Tambah ke dashboard
+  payments.push({name:n,whatsapp:w,desc:d,amount:a,proofURL:URL.createObjectURL(p)});
   renderPayments();
+  // Reset
+  document.getElementById('payerName').value='';
+  document.getElementById('payerWhatsapp').value='';
+  document.getElementById('payerDescription').value='';
+  document.getElementById('payerAmount').value='';
+  document.getElementById('proofUpload').value='';
 }
-function zoomImage(url){
-  document.getElementById('modalImage').src=url;
-  document.getElementById('imageModal').style.display='flex';
-}
-function closeModal(){
-  document.getElementById('imageModal').style.display='none';
-}
-function buyViaWA(productName){
-  const text = encodeURIComponent(`Halo kak, saya mau beli *${productName}*`);
-  window.open(`https://wa.me/6285793901218?text=${text}`,'_blank');
-}
-function buyViaTelegram(productName){
-  window.open('https://t.me/RiyanZxDev','_blank');
-}
+function renderPayments(){...}
+function approve(i){...}
+function reject(i){...}
+function zoomImage(u){...}
+function closeModal(){...}
 </script>
 </body>
 </html>
