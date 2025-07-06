@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Website RiyanZx - Login Google + Pembayaran</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+  body {font-family:sans-serif; background:#f4f9fd; padding:2rem;}
+  .hidden {display:none;}
+  .container {max-width:400px; margin:auto; background:#fff; border:1px solid #ddd; border-radius:0.5rem; padding:1.5rem; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+  button {width:100%; padding:0.7rem; background:#0072ff; color:#fff; border:none; border-radius:0.4rem; cursor:pointer; font-weight:bold;}
+  button:hover {background:#005dc0;}
+  input {width:100%; padding:0.6rem; margin:0.5rem 0; border:1px solid #ccc; border-radius:0.4rem;}
+  h2 {text-align:center; color:#0072ff;}
+  .profile {text-align:center; margin-bottom:1rem;}
+  .profile img {width:80px; height:80px; border-radius:50%; animation: spin 2s linear infinite;}
+  @keyframes spin {
+    0% {transform:rotate(0deg);}
+    100% {transform:rotate(360deg);}
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="loginContainer">
+  <h2>Login dengan Google</h2>
+  <button onclick="signIn()">Login Google</button>
+</div>
+
+<div class="container hidden" id="paymentContainer">
+  <div class="profile">
+    <img id="userPic" src="" alt="Profil">
+    <p id="userName"></p>
+  </div>
+  <h2>Form Pembayaran</h2>
+  <form id="paymentForm">
+    <input type="text" id="name" placeholder="Nama Lengkap" required>
+    <input type="text" id="whatsapp" placeholder="Nomor WhatsApp" required>
+    <input type="text" id="desc" placeholder="Deskripsi Pembelian" required>
+    <input type="number" id="amount" placeholder="Nominal (Rp)" required>
+    <button type="submit">Kirim Pembayaran</button>
+  </form>
+  <button onclick="signOut()">Logout</button>
+</div>
+
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1COpbnYRsIoAIIe1U8Wu-lssJhQRug3g",
+    authDomain: "pembayaran-web-3be88.firebaseapp.com",
+    projectId: "pembayaran-web-3be88",
+    appId: "1:809620912879:web:ab0751696c3c0909faf91a",
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // EmailJS Init
+  emailjs.init("UgZAEMfRtb599Vbuh");
+
+  const loginContainer = document.getElementById('loginContainer');
+  const paymentContainer = document.getElementById('paymentContainer');
+  const userPic = document.getElementById('userPic');
+  const userName = document.getElementById('userName');
+
+  function signIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        showUserInfo(user);
+      })
+      .catch((error) => {
+        alert('Login gagal: ' + error.message);
+      });
+  }
+
+  function signOut() {
+    auth.signOut().then(() => {
+      paymentContainer.classList.add('hidden');
+      loginContainer.classList.remove('hidden');
+    });
+  }
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      showUserInfo(user);
+    } else {
+      paymentContainer.classList.add('hidden');
+      loginContainer.classList.remove('hidden');
+    }
+  });
+
+  function showUserInfo(user) {
+    userPic.src = user.photoURL;
+    userName.textContent = user.displayName;
+    loginContainer.classList.add('hidden');
+    paymentContainer.classList.remove('hidden');
+  }
+
+  // Form submit
+  document.getElementById('paymentForm').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const whatsapp = document.getElementById('whatsapp').value;
+    const desc = document.getElementById('desc').value;
+    const amount = document.getElementById('amount').value;
+
+    const templateParams = {
+      name: name,
+      whatsapp: whatsapp,
+      description: desc,
+      amount: amount
+    };
+
+    emailjs.send('service_8c0ojp8','template_cbemtbe', templateParams)
+    .then(function(response) {
+      alert('Pembayaran berhasil dikirim dan email notifikasi sudah terkirim!');
+      document.getElementById('paymentForm').reset();
+    }, function(error) {
+      alert('Gagal mengirim: ' + JSON.stringify(error));
+    });
+  });
+</script>
+
+</body>
+</html>
