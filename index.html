@@ -1,134 +1,200 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Website RiyanZx - Login Google + Pembayaran</title>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<style>
-  body {font-family:sans-serif; background:#f4f9fd; padding:2rem;}
-  .hidden {display:none;}
-  .container {max-width:400px; margin:auto; background:#fff; border:1px solid #ddd; border-radius:0.5rem; padding:1.5rem; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-  button {width:100%; padding:0.7rem; background:#0072ff; color:#fff; border:none; border-radius:0.4rem; cursor:pointer; font-weight:bold;}
-  button:hover {background:#005dc0;}
-  input {width:100%; padding:0.6rem; margin:0.5rem 0; border:1px solid #ccc; border-radius:0.4rem;}
-  h2 {text-align:center; color:#0072ff;}
-  .profile {text-align:center; margin-bottom:1rem;}
-  .profile img {width:80px; height:80px; border-radius:50%; animation: spin 2s linear infinite;}
-  @keyframes spin {
-    0% {transform:rotate(0deg);}
-    100% {transform:rotate(360deg);}
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Website RiyanZx</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    body {font-family:sans-serif;background:#f4f9fd;margin:0;padding:0;}
+    .navbar {background:#0072ff;color:#fff;padding:1rem;display:flex;justify-content:space-between;align-items:center;}
+    .navbar h1 {margin:0;font-size:1.5rem;}
+    .menu {cursor:pointer;font-size:1.5rem;}
+    .page {display:none;padding:2rem;}
+    .active {display:block;}
+    .btn {background:#0072ff;color:#fff;border:none;padding:0.7rem 1.5rem;border-radius:0.4rem;cursor:pointer;margin-top:1rem;}
+    .btn:hover {background:#005dc0;}
+    input {width:100%;padding:0.7rem;margin-top:0.7rem;border:1px solid #ccc;border-radius:0.4rem;}
+    .product {border:1px solid #ddd;padding:1rem;margin:1rem 0;border-radius:0.5rem;background:#fff;}
+    .product h3 {margin:0;}
+    .methods {display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;}
+    .methods button {flex:1;background:#eee;border:none;padding:0.7rem;border-radius:0.4rem;cursor:pointer;}
+    .methods button:hover {background:#ddd;}
+    .sidebar {position:fixed;top:0;left:0;width:200px;height:100%;background:#fff;box-shadow:2px 0 5px rgba(0,0,0,0.1);padding:1rem;display:none;}
+    .sidebar a {display:block;margin:1rem 0;text-decoration:none;color:#333;}
+    .modal {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;}
+    .modal img {max-width:90%;border-radius:8px;}
+  </style>
 </head>
 <body>
 
-<div class="container" id="loginContainer">
-  <h2>Login dengan Google</h2>
-  <button onclick="signIn()">Login Google</button>
+<div class="navbar">
+  <h1>RiyanZx Store</h1>
+  <div class="menu" onclick="toggleSidebar()">☰</div>
 </div>
 
-<div class="container hidden" id="paymentContainer">
-  <div class="profile">
-    <img id="userPic" src="" alt="Profil">
-    <p id="userName"></p>
+<div class="sidebar" id="sidebar">
+  <a href="#" onclick="showPage('home')">Dashboard</a>
+  <a href="#" onclick="showPage('produk')">Produk</a>
+  <a href="#" onclick="showPage('bayar')">Pembayaran</a>
+  <a href="#" onclick="showPage('admin')">Admin</a>
+</div>
+
+<div class="page active" id="home">
+  <h2>Selamat Datang di Store RiyanZx</h2>
+  <p>Website ini dirancang untuk transaksi produk digital</p>
+  <a class="btn" href="https://wa.me/6285793901218">Hubungi via WhatsApp</a>
+</div>
+
+<div class="page" id="produk">
+  <h2>Produk Kami</h2>
+
+  <div class="product">
+    <h3>Panel Unli 5K</h3>
+    <p>Panel unlimited murah meriah 🔥</p>
+    <p><b>Harga:</b> Rp5.000</p>
+    <button class="btn" onclick="buy('Panel Unli 5K')">Beli via WhatsApp</button>
+    <button class="btn" onclick="buyTG()">Beli via Telegram</button>
   </div>
+
+  <div class="product">
+    <h3>Script Kayzen V5</h3>
+    <p>Script bot WhatsApp premium</p>
+    <p><b>Harga:</b> Rp15.000</p>
+    <button class="btn" onclick="buy('Script Kayzen V5')">Beli via WhatsApp</button>
+    <button class="btn" onclick="buyTG()">Beli via Telegram</button>
+  </div>
+</div>
+
+<div class="page" id="bayar">
   <h2>Form Pembayaran</h2>
-  <form id="paymentForm">
-    <input type="text" id="name" placeholder="Nama Lengkap" required>
-    <input type="text" id="whatsapp" placeholder="Nomor WhatsApp" required>
+  <form id="formBayar">
+    <input type="text" id="nama" placeholder="Nama Lengkap" required>
+    <input type="text" id="wa" placeholder="Nomor WhatsApp" required>
     <input type="text" id="desc" placeholder="Deskripsi Pembelian" required>
-    <input type="number" id="amount" placeholder="Nominal (Rp)" required>
-    <button type="submit">Kirim Pembayaran</button>
+    <input type="number" id="nominal" placeholder="Nominal (Rp)" required>
+    <div class="methods">
+      <button type="button" onclick="setMethod('Dana', '0857-9390-1218')">Dana</button>
+      <button type="button" onclick="setMethod('GoPay', '0857-9390-1218')">GoPay</button>
+      <button type="button" onclick="setMethod('OVO', 'Tidak tersedia')">OVO</button>
+      <button type="button" onclick="setMethod('QRIS', 'https://files.catbox.moe/1fodlk.jpg')">QRIS</button>
+    </div>
+    <div id="metodeInfo" style="margin-top:1rem;"></div>
+    <input type="file" id="bukti" accept="image/*" required>
+    <button class="btn" type="submit">Kirim Pembayaran</button>
   </form>
-  <button onclick="signOut()">Logout</button>
+</div>
+
+<div class="page" id="admin">
+  <h2>Login Admin</h2>
+  <input type="password" id="adminPass" placeholder="Masukkan Password">
+  <button class="btn" onclick="loginAdmin()">Login</button>
+  <div id="adminPanel" style="margin-top:2rem;"></div>
+</div>
+
+<div class="modal" id="imgModal" onclick="closeModal()">
+  <img id="modalImage" src="">
 </div>
 
 <script>
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyB1COpbnYRsIoAIIe1U8Wu-lssJhQRug3g",
-    authDomain: "pembayaran-web-3be88.firebaseapp.com",
-    projectId: "pembayaran-web-3be88",
-    appId: "1:809620912879:web:ab0751696c3c0909faf91a",
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+  let metode = '';
+  let metodeInfo = '';
+  let dataPembayaran = [];
 
-  // EmailJS Init
   emailjs.init("UgZAEMfRtb599Vbuh");
 
-  const loginContainer = document.getElementById('loginContainer');
-  const paymentContainer = document.getElementById('paymentContainer');
-  const userPic = document.getElementById('userPic');
-  const userName = document.getElementById('userName');
-
-  function signIn() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .then((result) => {
-        const user = result.user;
-        showUserInfo(user);
-      })
-      .catch((error) => {
-        alert('Login gagal: ' + error.message);
-      });
+  function toggleSidebar(){
+    const sb = document.getElementById('sidebar');
+    sb.style.display = sb.style.display === 'block' ? 'none' : 'block';
   }
 
-  function signOut() {
-    auth.signOut().then(() => {
-      paymentContainer.classList.add('hidden');
-      loginContainer.classList.remove('hidden');
-    });
+  function showPage(id){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    toggleSidebar();
   }
 
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      showUserInfo(user);
+  function buy(product){
+    const url = `https://wa.me/6285793901218?text=Halo%20kak,%20saya%20mau%20beli%20${encodeURIComponent(product)}`;
+    window.open(url, '_blank');
+  }
+
+  function buyTG(){
+    window.open('https://t.me/RiyanZxDev', '_blank');
+  }
+
+  function setMethod(name, info){
+    metode = name;
+    if(name === 'QRIS'){
+      metodeInfo = `<p><b>QRIS:</b><br><img src="${info}" style="max-width:150px;"></p>`;
     } else {
-      paymentContainer.classList.add('hidden');
-      loginContainer.classList.remove('hidden');
+      metodeInfo = `<p><b>${name}:</b> ${info}</p>`;
     }
-  });
-
-  function showUserInfo(user) {
-    userPic.src = user.photoURL;
-    userName.textContent = user.displayName;
-    loginContainer.classList.add('hidden');
-    paymentContainer.classList.remove('hidden');
+    document.getElementById('metodeInfo').innerHTML = metodeInfo;
   }
 
-  // Form submit
-  document.getElementById('paymentForm').addEventListener('submit', function(e){
+  document.getElementById('formBayar').addEventListener('submit', function(e){
     e.preventDefault();
-
-    const name = document.getElementById('name').value;
-    const whatsapp = document.getElementById('whatsapp').value;
+    const nama = document.getElementById('nama').value;
+    const wa = document.getElementById('wa').value;
     const desc = document.getElementById('desc').value;
-    const amount = document.getElementById('amount').value;
+    const nominal = document.getElementById('nominal').value;
+    const bukti = document.getElementById('bukti').files[0];
 
-    const templateParams = {
-      name: name,
-      whatsapp: whatsapp,
+    if(!metode || !bukti){
+      alert("Pilih metode pembayaran dan upload bukti!");
+      return;
+    }
+
+    const url = URL.createObjectURL(bukti);
+    dataPembayaran.push({nama, wa, desc, nominal, metode, url});
+    
+    emailjs.send('service_8c0ojp8','template_cbemtbe', {
+      name: nama,
+      whatsapp: wa,
       description: desc,
-      amount: amount
-    };
-
-    emailjs.send('service_8c0ojp8','template_cbemtbe', templateParams)
-    .then(function(response) {
-      alert('Pembayaran berhasil dikirim dan email notifikasi sudah terkirim!');
-      document.getElementById('paymentForm').reset();
-    }, function(error) {
-      alert('Gagal mengirim: ' + JSON.stringify(error));
+      amount: nominal
+    }).then(() => {
+      alert('Pembayaran berhasil dikirim dan email notifikasi masuk!');
+      document.getElementById('formBayar').reset();
+      document.getElementById('metodeInfo').innerHTML = '';
     });
   });
+
+  function loginAdmin(){
+    const pass = document.getElementById('adminPass').value;
+    if(pass === "Killua"){
+      let output = '<h3>Data Pembayaran:</h3>';
+      if(dataPembayaran.length === 0){
+        output += '<p>Belum ada data</p>';
+      } else {
+        dataPembayaran.forEach((d, i) => {
+          output += `
+            <div style="border:1px solid #ccc;padding:1rem;margin:1rem 0;">
+              <p><b>Nama:</b> ${d.nama}</p>
+              <p><b>WA:</b> ${d.wa}</p>
+              <p><b>Deskripsi:</b> ${d.desc}</p>
+              <p><b>Nominal:</b> Rp${d.nominal}</p>
+              <p><b>Metode:</b> ${d.metode}</p>
+              <img src="${d.url}" style="width:100px;cursor:pointer;" onclick="zoom('${d.url}')">
+            </div>
+          `;
+        });
+      }
+      document.getElementById('adminPanel').innerHTML = output;
+    } else {
+      alert("Password salah!");
+    }
+  }
+
+  function zoom(src){
+    document.getElementById('modalImage').src = src;
+    document.getElementById('imgModal').style.display = 'flex';
+  }
+
+  function closeModal(){
+    document.getElementById('imgModal').style.display = 'none';
+  }
 </script>
 
 </body>
