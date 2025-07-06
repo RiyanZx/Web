@@ -1,570 +1,70 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Website RiyanZx</title>
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <style>
-    body {font-family:sans-serif;background:#f4f9fd;margin:0;padding:0;}
-    .navbar {background:#0072ff;color:#fff;padding:1rem;display:flex;justify-content:space-between;align-items:center;}
-    .navbar h1 {margin:0;font-size:1.5rem;}
-    .menu {cursor:pointer;font-size:1.5rem;}
-    .page {display:none;padding:2rem;}
-    .active {display:block;}
-    .btn {background:#0072ff;color:#fff;border:none;padding:0.7rem 1.5rem;border-radius:0.4rem;cursor:pointer;margin-top:1rem;}
-    .btn:hover {background:#005dc0;}
-    input {width:100%;padding:0.7rem;margin-top:0.7rem;border:1px solid #ccc;border-radius:0.4rem;}
-    .product {border:1px solid #ddd;padding:1rem;margin:1rem 0;border-radius:0.5rem;background:#fff;}
-    .product h3 {margin:0;}
-    .methods {display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;}
-    .methods button {flex:1;background:#eee;border:none;padding:0.7rem;border-radius:0.4rem;cursor:pointer;}
-    .methods button:hover {background:#ddd;}
-    .sidebar {position:fixed;top:0;left:0;width:200px;height:100%;background:#fff;box-shadow:2px 0 5px rgba(0,0,0,0.1);padding:1rem;display:none;}
-    .sidebar a {display:block;margin:1rem 0;text-decoration:none;color:#333;}
-    .modal {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;}
-    .modal img {max-width:90%;border-radius:8px;}
-  </style>
-</head>
-<body>
-
-<div class="navbar">
-  <h1>RiyanZx Store</h1>
-  <div class="menu" onclick="toggleSidebar()">☰</div>
-</div>
-
-<div class="sidebar" id="sidebar">
-  <a href="#" onclick="showPage('home')">Dashboard</a>
-  <a href="#" onclick="showPage('produk')">Produk</a>
-  <a href="#" onclick="showPage('bayar')">Pembayaran</a>
-  <a href="#" onclick="showPage('admin')">Admin</a>
-</div>
-
-<div class="page active" id="home">
-  <h2>Selamat Datang di Store RiyanZx</h2>
-  <p>Website ini dirancang untuk transaksi produk digital</p>
-  <a class="btn" href="https://wa.me/6285793901218">Hubungi via WhatsApp</a>
-</div>
-
-<div class="page" id="produk">
-  <h2>Produk Kami</h2>
-
-  <div class="product">
-    <h3>Panel Unli 5K</h3>
-    <p>Panel unlimited murah meriah 🔥</p>
-    <p><b>Harga:</b> Rp5.000</p>
-    <button class="btn" onclick="buy('Panel Unli 5K')">Beli via WhatsApp</button>
-    <button class="btn" onclick="buyTG()">Beli via Telegram</button>
-  </div>
-
-  <div class="product">
-    <h3>Script Kayzen V5</h3>
-    <p>Script bot WhatsApp premium</p>
-    <p><b>Harga:</b> Rp15.000</p>
-    <button class="btn" onclick="buy('Script Kayzen V5')">Beli via WhatsApp</button>
-    <button class="btn" onclick="buyTG()">Beli via Telegram</button>
-  </div>
-</div>
-
-<div class="page" id="bayar">
-  <h2>Form Pembayaran</h2>
-  <form id="formBayar">
-    <input type="text" id="nama" placeholder="Nama Lengkap" required>
-    <input type="text" id="wa" placeholder="Nomor WhatsApp" required>
-    <input type="text" id="desc" placeholder="Deskripsi Pembelian" required>
-    <input type="number" id="nominal" placeholder="Nominal (Rp)" required>
-    <div class="methods">
-      <button type="button" onclick="setMethod('Dana', '0857-9390-1218')">Dana</button>
-      <button type="button" onclick="setMethod('GoPay', '0857-9390-1218')">GoPay</button>
-      <button type="button" onclick="setMethod('OVO', 'Tidak tersedia')">OVO</button>
-      <button type="button" onclick="setMethod('QRIS', 'https://files.catbox.moe/1fodlk.jpg')">QRIS</button>
-    </div>
-    <div id="metodeInfo" style="margin-top:1rem;"></div>
-    <input type="file" id="bukti" accept="image/*" required>
-    <button class="btn" type="submit">Kirim Pembayaran</button>
-  </form>
-</div>
-
-<div class="page" id="admin">
-  <h2>Login Admin</h2>
-  <input type="password" id="adminPass" placeholder="Masukkan Password">
-  <button class="btn" onclick="loginAdmin()">Login</button>
-  <div id="adminPanel" style="margin-top:2rem;"></div>
-</div>
-
-<div class="modal" id="imgModal" onclick="closeModal()">
-  <img id="modalImage" src="">
-</div>
-
-<script>
-  let metode = '';
-  let metodeInfo = '';
-  let dataPembayaran = [];
-
-  emailjs.init("UgZAEMfRtb599Vbuh");
-
-  function toggleSidebar(){
-    const sb = document.getElementById('sidebar');
-    sb.style.display = sb.style.display === 'block' ? 'none' : 'block';
-  }
-
-  function showPage(id){
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    toggleSidebar();
-  }
-
-  function buy(product){
-    const url = `https://wa.me/6285793901218?text=Halo%20kak,%20saya%20mau%20beli%20${encodeURIComponent(product)}`;
-    window.open(url, '_blank');
-  }
-
-  function buyTG(){
-    window.open('https://t.me/RiyanZxDev', '_blank');
-  }
-
-  function setMethod(name, info){
-    metode = name;
-    if(name === 'QRIS'){
-      metodeInfo = `<p><b>QRIS:</b><br><img src="${info}" style="max-width:150px;"></p>`;
-    } else {
-      metodeInfo = `<p><b>${name}:</b> ${info}</p>`;
-    }
-    document.getElementById('metodeInfo').innerHTML = metodeInfo;
-  }
-
-  document.getElementById('formBayar').addEventListener('submit', function(e){
-    e.preventDefault();
-    const nama = document.getElementById('nama').value;
-    const wa = document.getElementById('wa').value;
-    const desc = document.getElementById('desc').value;
-    const nominal = document.getElementById('nominal').value;
-    const bukti = document.getElementById('bukti').files[0];
-
-    if(!metode || !bukti){
-      alert("Pilih metode pembayaran dan upload bukti!");
-      return;
-    }
-
-    const url = URL.createObjectURL(bukti);
-    dataPembayaran.push({nama, wa, desc, nominal, metode, url});
-    
-    emailjs.send('service_8c0ojp8','template_cbemtbe', {
-      name: nama,
-      whatsapp: wa,
-      description: desc,
-      amount: nominal
-    }).then(() => {
-      alert('Pembayaran berhasil dikirim dan email notifikasi masuk!');
-      document.getElementById('formBayar').reset();
-      document.getElementById('metodeInfo').innerHTML = '';
-    });
-  });
-
-  function loginAdmin(){
-    const pass = document.getElementById('adminPass').value;
-    if(pass === "Killua"){
-      let output = '<h3>Data Pembayaran:</h3>';
-      if(dataPembayaran.length === 0){
-        output += '<p>Belum ada data</p>';
-      } else {
-        dataPembayaran.forEach((d, i) => {
-          output += `
-            <div style="border:1px solid #ccc;padding:1rem;margin:1rem 0;">
-              <p><b>Nama:</b> ${d.nama}</p>
-              <p><b>WA:</b> ${d.wa}</p>
-              <p><b>Deskripsi:</b> ${d.desc}</p>
-              <p><b>Nominal:</b> Rp${d.nominal}</p>
-              <p><b>Metode:</b> ${d.metode}</p>
-              <img src="${d.url}" style="width:100px;cursor:pointer;" onclick="zoom('${d.url}')">
-<!DOCTYPE html>
-<html lang="id">
-<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Website RiyanZx Store</title>
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<title>RiyanZx Store - Produk & Pembayaran</title>
 <style>
-  body {margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f4f9fd;color:#333;overflow-x:hidden;}
-  .navbar {background:linear-gradient(90deg,#00c6ff,#0072ff);display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;color:#fff;}
-  .navbar-left {display:flex;align-items:center;}
-  .logo-img {width:40px;height:40px;border-radius:50%;object-fit:cover;margin-right:0.5rem;}
-  .navbar h1 {margin:0;font-size:1.3rem;}
-  .menu {font-size:1.7rem;cursor:pointer;}
-  .sidebar {position:fixed;top:0;right:-260px;width:260px;height:100%;background:#fff;box-shadow:-2px 0 8px rgba(0,0,0,0.1);transition:right 0.3s ease;z-index:999;}
-  .sidebar-header {display:flex;align-items:center;padding:1rem;border-bottom:1px solid #eee;}
-  .sidebar-header img {width:40px;height:40px;border-radius:50%;margin-right:0.7rem;}
-  .sidebar-header span {font-weight:bold;color:#333;}
-  .sidebar a {display:block;padding:1rem;text-decoration:none;color:#333;border-bottom:1px solid #eee;}
-  .sidebar a:hover {background:#f0f0f0;}
-  .page {display:none;padding:2rem;text-align:center;}
+  body {margin:0;font-family:sans-serif;background:#f4f9fd;color:#333;}
+  .header {background:linear-gradient(90deg,#00c6ff,#0072ff);color:#fff;padding:1rem;text-align:center;}
+  .contact-buttons a {display:inline-block;margin:0.4rem;padding:0.6rem 1rem;background:#0072ff;color:#fff;text-decoration:none;border-radius:0.4rem;}
+  .product {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;max-width:400px;}
+  .product .buy-buttons button {margin:0.3rem;}
   button {padding:0.6rem 1.2rem;background:#0072ff;color:#fff;border:none;border-radius:0.4rem;font-weight:bold;cursor:pointer;}
   button:hover {background:#005dc0;}
-  .contact-buttons {margin-top:1.5rem;}
-  .contact-buttons a {display:inline-block;margin:0.3rem;padding:0.6rem 1rem;background:#0072ff;color:#fff;text-decoration:none;border-radius:0.4rem;font-weight:bold;}
-  .product {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;max-width:400px;}
-  .product h3 {margin:0;}
-  .product p {margin:0.5rem 0;}
-  .product .buy-buttons {margin-top:0.5rem;}
-  .product .buy-buttons button {margin:0.3rem;}
-  input {width:90%;max-width:300px;padding:0.5rem;margin:0.5rem auto;border:1px solid #ccc;border-radius:0.4rem;}
-  .payment-methods {margin:1rem auto;max-width:400px;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;}
-  .method-btn {flex:1 1 40%;background:#eee;border:none;padding:0.7rem;border-radius:0.4rem;cursor:pointer;}
-  .method-btn:hover {background:#ddd;}
-  .method-info {margin-top:1rem;font-size:0.9rem;color:#555;}
-  .payment-entry {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;max-width:400px;text-align:left;}
-  .payment-entry img {width:100px;height:auto;cursor:pointer;border:1px solid #ccc;border-radius:4px;}
-  .modal {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:1000;}
-  .modal img {max-width:90%;border-radius:6px;}
+  input {width:90%;max-width:300px;padding:0.5rem;margin:0.5rem auto;display:block;border:1px solid #ccc;border-radius:0.4rem;}
+  .payment-method {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;max-width:400px;text-align:center;}
+  .payment-method img {width:150px;margin-top:0.5rem;}
 </style>
 </head>
 <body>
 
-<div class="navbar">
-  <div class="navbar-left">
-    <img src="https://files.catbox.moe/1fodlk.jpg" alt="Logo" class="logo-img">
-    <h1>RiyanZx Store</h1>
-  </div>
-  <div class="menu" onclick="toggleSidebar()">&#9776;</div>
-</div>
-
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <img src="https://files.catbox.moe/1fodlk.jpg" alt="Profile">
-    <span>RiyanZx</span>
-  </div>
-  <a href="#" onclick="showDashboard()">Dashboard</a>
-  <a href="#" onclick="showProducts()">Produk</a>
-  <a href="#" onclick="showPayment()">Pembayaran</a>
-  <a href="#" onclick="showAdminLogin()">Admin</a>
-  <a href="#" onclick="closeSidebar()">Tutup Menu</a>
-</div>
-
-<div class="page" id="dashboardPage" style="display:block;">
-  <h2>Selamat Datang di Website RiyanZx Store</h2>
-  <p>Website ini dirancang untuk jual beli produk digital dengan pembayaran mudah.</p>
+<div class="header">
+  <h1>RiyanZx Store</h1>
+  <p>Website jual beli digital</p>
   <div class="contact-buttons">
     <a href="https://wa.me/6285793901218?text=Halo%20kak%20saya%20mau%20beli" target="_blank">Chat WhatsApp</a>
     <a href="https://t.me/RiyanZxDev" target="_blank">Telegram</a>
+    <a href="https://whatsapp.com/channel/0029Vb61aq91HspunomeKm2j" target="_blank">Saluran WA</a>
   </div>
 </div>
 
-<div class="page" id="productsPage">
-  <h2>Produk Kami</h2>
-  <div class="product">
-    <h3>Panel Unli 5K</h3>
-    <p>Panel unlimited murah meriah 🔥</p>
-    <p><b>Harga:</b> Rp5.000</p>
-    <div class="buy-buttons">
-      <button onclick="buyViaWA('Panel Unli 5K')">Beli via WhatsApp</button>
-      <button onclick="buyViaTelegram('Panel Unli 5K')">Beli via Telegram</button>
-    </div>
+<h2 style="text-align:center;margin-top:1rem;">Produk Kami</h2>
+<div class="product">
+  <h3>Panel Unli 5K</h3>
+  <p>Panel unlimited murah meriah 🔥</p>
+  <p><b>Harga:</b> Rp5.000</p>
+  <div class="buy-buttons">
+    <button onclick="buyViaWA('Panel Unli 5K')">Beli via WhatsApp</button>
+    <button onclick="buyViaTelegram('Panel Unli 5K')">Beli via Telegram</button>
   </div>
-  <div class="product">
-    <h3>Script Kayzen V5</h3>
-    <p>Script bot WhatsApp premium</p>
-    <p><b>Harga:</b> Rp15.000</p>
-    <div class="buy-buttons">
-      <button onclick="buyViaWA('Script Kayzen V5')">Beli via WhatsApp</button>
-      <button onclick="buyViaTelegram('Script Kayzen V5')">Beli via Telegram</button>
-    </div>
+</div>
+<div class="product">
+  <h3>Script Kayzen V5</h3>
+  <p>Script bot WhatsApp premium</p>
+  <p><b>Harga:</b> Rp15.000</p>
+  <div class="buy-buttons">
+    <button onclick="buyViaWA('Script Kayzen V5')">Beli via WhatsApp</button>
+    <button onclick="buyViaTelegram('Script Kayzen V5')">Beli via Telegram</button>
   </div>
 </div>
 
-<div class="page" id="paymentPage">
-  <h2>Form Pembayaran</h2>
-  <input type="text" id="payerName" placeholder="Nama Lengkap">
-  <input type="text" id="payerWhatsapp" placeholder="Nomor WhatsApp (cth: 628xxxx)">
-  <input type="text" id="payerDescription" placeholder="Deskripsi Pembelian">
-  <input type="number" id="payerAmount" placeholder="Nominal Pembayaran (Rp)">
-  <div class="payment-methods">
-    <button class="method-btn" onclick="showMethod('Dana','0857-9390-1218')">Dana</button>
-    <button class="method-btn" onclick="showMethod('GoPay','0857-9390-1218')">GoPay</button>
-    <button class="method-btn" onclick="showMethod('OVO','Tidak tersedia')">OVO</button>
-    <button class="method-btn" onclick="showMethod('QRIS','https://files.catbox.moe/1fodlk.jpg')">QRIS</button>
-  </div>
-  <div class="method-info" id="methodInfo"></div>
-  <input type="file" id="proofUpload" accept="image/*">
-  <button onclick="submitPayment()">Kirim Pembayaran</button>
-</div>
-
-<div class="page" id="adminLoginPage">
-  <h2>Login Admin</h2>
-  <input type="password" id="adminPassword" placeholder="Masukkan Password">
-  <br><br>
-  <button onclick="checkAdminPassword()">Login</button>
-</div>
-
-<div class="page" id="adminPage">
-  <h2>Admin Dashboard</h2>
-  <div id="paymentList"></div>
-  <button onclick="showDashboard()">Keluar</button>
-</div>
-
-<div class="modal" id="imageModal" onclick="closeModal()">
-  <img id="modalImage" src="" alt="Bukti">
+<h2 style="text-align:center;margin-top:2rem;">Informasi Pembayaran</h2>
+<div class="payment-method">
+  <p><b>Dana:</b> 0857-9390-1218</p>
+  <p><b>GoPay:</b> 0857-9390-1218</p>
+  <p><b>OVO:</b> 0857-9390-1218</p>
+  <p><b>QRIS:</b></p>
+  <img src="https://files.catbox.moe/1fodlk.jpg" alt="QRIS">
 </div>
 
 <script>
-emailjs.init("UgZAEMfRtb599Vbuh");
-
-let payments = [];
-let selectedMethod = '';
-
-function toggleSidebar(){
-  const s = document.getElementById('sidebar');
-  s.style.right = s.style.right==='0px' ? '-260px' : '0px';
+function buyViaWA(product){
+  window.open(`https://wa.me/6285793901218?text=Halo%20kak%2C%20mau%20beli%20*${encodeURIComponent(product)}*`,'_blank');
 }
-function closeSidebar(){
-  document.getElementById('sidebar').style.right = '-260px';
+function buyViaTelegram(product){
+  window.open('https://t.me/RiyanZxDev','_blank');
 }
-function hideAll(){
-  document.querySelectorAll('.page').forEach(p => p.style.display='none');
-}
-function showDashboard(){
-  hideAll();
-  document.getElementById('dashboardPage').style.display='block';
-  closeSidebar();
-}
-function showProducts(){
-  hideAll();
-  document.getElementById('productsPage').style.display='block';
-  closeSidebar();
-}
-function showPayment(){
-  hideAll();
-  document.getElementById('paymentPage').style.display='block';
-  closeSidebar();
-}
-function showAdminLogin(){
-  hideAll();
-  document.getElementById('adminLoginPage').style.display='block';
-  closeSidebar();
-}
-function checkAdminPassword(){
-  const pass = document.getElementById('adminPassword').value;
-  if(pass==='Killua'){
-    hideAll();
-    document.getElementById('adminPage').style.display='block';
-    renderPayments();
-  } else {
-    alert('Password salah!');
-  }
-}
-function showMethod(method, info){
-  selectedMethod=method;
-  const div=document.getElementById('methodInfo');
-  if(method==='QRIS'){
-    div.innerHTML=`<b>${method}</b><br><img src="${info}" alt="QRIS" style="width:150px;margin-top:0.5rem;">`;
-  }else{
-    div.innerHTML=`<b>${method}:</b> ${info}`;
-  }
-}
-function submitPayment(){
-  const name=document.getElementById('payerName').value;
-  const whatsapp=document.getElementById('payerWhatsapp').value;
-  const desc=document.getElementById('payerDescription').value;
-  const amount=document.getElementById('payerAmount').value;
-  const proof=document.getElementById('proofUpload').files[0];
-  if(!name||!whatsapp||!desc||!amount||!selectedMethod||!proof){
-    alert('Lengkapi semua field dan pilih metode pembayaran!');
-    return;
-  }
-  const templateParams = {
-    name, whatsapp, description: desc, amount
-  };
-  emailjs.send('service_8c0ojp8','template_cbemtbe',templateParams)
-  .then(() => alert('Pembayaran berhasil dikirim dan email notifikasi sudah terkirim!'))
-  .catch((error) => alert('Gagal mengirim: '+JSON.stringify(error)));
-  payments.push({name, whatsapp, desc, amount, method:selectedMethod, proofURL:URL.createObjectURL(proof)});
-  document.getElementById('payerName').value='';
-  document.getElementById('payerWhatsapp').value='';
-  document.getElementById('payerDescription').value='';
-  document.getElementById('payerAmount').value='';
-  document.getElementById('proofUpload').value='';
-  document.getElementById('methodInfo').innerHTML='';
-  selectedMethod='';
-}
-function renderPayments(){
-  const list=document.getElementById('paymentList');
-  list.innerHTML='';
-  if(payments.length===0){
-    list.innerHTML='<p>Tidak ada pembayaran.</p>';
-    return;
-  }
-  payments.forEach((p,i)=>{
-    list.innerHTML+=`
-      <div class="payment-entry">
-        <p><b>Nama:</b> ${p.name}</p>
-        <p><b>WA:</b> ${p.whatsapp}</p>
-        <p><b>Deskripsi:</b> ${p.desc}</p>
-        <p><b>Nominal:</b> Rp${p.amount}</p>
-        <p><b>Metode:</b> ${p.method}</p>
-        <p><b>Bukti:</b><br>
-          <img src="${p.proofURL}" alt="Bukti" onclick="zoomImage('${p.proofURL}')">
-        </p>
-        <button onclick="approve(${i})">Setujui</button>
-        <button onclick="reject(${i})">Tolak</button>
-      </div>
-    `;
-  });
-}
-function approve(index){
-  alert('Pembayaran disetujui: '+payments[index].name);
-  payments.splice(index,1);
-  renderPayments();
-}
-function reject(index){
-  alert('Pembayaran ditolak: '+payments[index].name);
-  payments.splice(index,1);
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Website RiyanZx</title>
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<style>
-  /* styling sama seperti sebelumnya (biar rapi) */
-  body {margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f4f9fd;color:#333;}
-  .navbar {background:linear-gradient(90deg,#00c6ff,#0072ff);display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;color:#fff;}
-  .navbar-left {display:flex;align-items:center;}
-  .logo-img {width:40px;height:40px;border-radius:50%;margin-right:0.5rem;}
-  .menu {font-size:1.7rem;cursor:pointer;}
-  .sidebar {position:fixed;top:0;right:-260px;width:260px;height:100%;background:#fff;box-shadow:-2px 0 8px rgba(0,0,0,0.1);transition:right 0.3s ease;}
-  .sidebar-header {display:flex;align-items:center;padding:1rem;border-bottom:1px solid #eee;}
-  .sidebar-header img {width:40px;height:40px;border-radius:50%;margin-right:0.7rem;}
-  .sidebar a {display:block;padding:1rem;text-decoration:none;color:#333;border-bottom:1px solid #eee;}
-  .sidebar a:hover {background:#f0f0f0;}
-  .page {display:none;padding:2rem;text-align:center;}
-  button {padding:0.6rem 1.2rem;background:#0072ff;color:#fff;border:none;border-radius:0.4rem;font-weight:bold;cursor:pointer;}
-  .product {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;max-width:400px;}
-  input {width:90%;max-width:300px;padding:0.5rem;margin:0.5rem auto;border:1px solid #ccc;border-radius:0.4rem;}
-  .method-info {margin-top:1rem;font-size:0.9rem;color:#555;}
-  .payment-entry {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem auto;}
-  .payment-entry img {width:100px;height:auto;cursor:pointer;border:1px solid #ccc;border-radius:4px;}
-  .modal {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;z-index:1000;}
-  .modal img {max-width:90%;border-radius:6px;}
-</style>
-</head>
-<body>
-
-<div class="navbar">
-  <div class="navbar-left">
-    <img src="https://files.catbox.moe/1fodlk.jpg" class="logo-img">
-    <h1>RiyanZx</h1>
-  </div>
-  <div class="menu" onclick="toggleSidebar()">&#9776;</div>
-</div>
-
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <img src="https://files.catbox.moe/1fodlk.jpg">
-    <span>RiyanZx</span>
-  </div>
-  <a href="#" onclick="showDashboard()">Dashboard</a>
-  <a href="#" onclick="showProducts()">Produk</a>
-  <a href="#" onclick="showPayment()">Pembayaran</a>
-  <a href="#" onclick="showAdminLogin()">Admin</a>
-  <a href="#" onclick="closeSidebar()">Tutup Menu</a>
-</div>
-
-<div class="page" id="dashboardPage" style="display:block;">
-  <h2>Selamat Datang di Website RiyanZx</h2>
-  <div class="contact-buttons">
-    <a href="https://wa.me/6285793901218" target="_blank">WhatsApp</a>
-    <a href="https://t.me/RiyanZxDev" target="_blank">Telegram</a>
-  </div>
-</div>
-
-<div class="page" id="productsPage">
-  <h2>Produk Kami</h2>
-  <div class="product">
-    <h3>Panel Unli 5K</h3>
-    <p>Harga: Rp5.000</p>
-    <button onclick="buyViaWA('Panel Unli 5K')">Beli via WA</button>
-  </div>
-  <div class="product">
-    <h3>Script Kayzen V5</h3>
-    <p>Harga: Rp15.000</p>
-    <button onclick="buyViaWA('Script Kayzen V5')">Beli via WA</button>
-  </div>
-</div>
-
-<div class="page" id="paymentPage">
-  <h2>Form Pembayaran</h2>
-  <input type="text" id="payerName" placeholder="Nama Lengkap">
-  <input type="text" id="payerWhatsapp" placeholder="Nomor WhatsApp">
-  <input type="text" id="payerDescription" placeholder="Deskripsi Pembelian">
-  <input type="number" id="payerAmount" placeholder="Nominal (Rp)">
-  <div class="method-info" id="methodInfo"></div>
-  <input type="file" id="proofUpload" accept="image/*">
-  <button onclick="submitPayment()">Kirim Pembayaran</button>
-</div>
-
-<div class="page" id="adminLoginPage">
-  <h2>Login Admin</h2>
-  <input type="password" id="adminPassword" placeholder="Password">
-  <button onclick="checkAdminPassword()">Login</button>
-</div>
-
-<div class="page" id="adminPage">
-  <h2>Admin Dashboard</h2>
-  <div id="paymentList"></div>
-  <button onclick="showDashboard()">Keluar</button>
-</div>
-
-<div class="modal" id="imageModal" onclick="closeModal()">
-  <img id="modalImage">
-</div>
-
-<script>
-// EmailJS init
-emailjs.init("YOUR_PUBLIC_KEY"); // Ganti YOUR_PUBLIC_KEY
-
-let payments = [];
-
-function toggleSidebar(){...} // Sama seperti sebelumnya
-function closeSidebar(){...}
-function hideAll(){...}
-function showDashboard(){...}
-function showProducts(){...}
-function showPayment(){...}
-function showAdminLogin(){...}
-function checkAdminPassword(){...}
-function buyViaWA(product){window.open(`https://wa.me/6285793901218?text=Halo%20kak%2C%20mau%20beli%20${encodeURIComponent(product)}`);}
-
-function submitPayment(){
-  const n=document.getElementById('payerName').value;
-  const w=document.getElementById('payerWhatsapp').value;
-  const d=document.getElementById('payerDescription').value;
-  const a=document.getElementById('payerAmount').value;
-  const p=document.getElementById('proofUpload').files[0];
-  if(!n||!w||!d||!a||!p){alert('Lengkapi semua field!');return;}
-  // EmailJS send
-  emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{name:n, whatsapp:w, description:d, amount:a})
-  .then(()=>alert("Pembayaran dikirim & notifikasi email terkirim!"))
-  .catch(e=>alert("Gagal kirim email: "+JSON.stringify(e)));
-  // Tambah ke dashboard
-  payments.push({name:n,whatsapp:w,desc:d,amount:a,proofURL:URL.createObjectURL(p)});
-  renderPayments();
-  // Reset
-  document.getElementById('payerName').value='';
-  document.getElementById('payerWhatsapp').value='';
-  document.getElementById('payerDescription').value='';
-  document.getElementById('payerAmount').value='';
-  document.getElementById('proofUpload').value='';
-}
-function renderPayments(){...}
-function approve(i){...}
-function reject(i){...}
-function zoomImage(u){...}
-function closeModal(){...}
 </script>
-</body>
-</html>
-
 </body>
 </html>
