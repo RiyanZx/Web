@@ -3,194 +3,220 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RiyanZx Store</title>
+<title>Website RiyanZx</title>
 <style>
-  body {margin:0;font-family:'Segoe UI', Tahoma, sans-serif;background:#f4f9fd;color:#333;}
-  header {background:#0072ff;color:#fff;padding:1rem;text-align:center;}
-  .container {max-width:600px;margin:auto;padding:1rem;display:none;}
-  .product, .payment {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem 0;}
-  .contact-buttons {display:flex;flex-wrap:wrap;gap:0.5rem;}
-  .contact-buttons a {flex:1;text-decoration:none;}
-  .contact-buttons button {width:100%;background:#0072ff;color:#fff;border:none;padding:0.6rem;border-radius:0.4rem;cursor:pointer;font-weight:bold;}
-  .contact-buttons button:hover {background:#005dc0;}
-  .admin-btn {position:fixed;top:1rem;left:1rem;background:#fff;border:1px solid #ccc;padding:0.5rem 1rem;border-radius:2rem;cursor:pointer;font-weight:bold;box-shadow:0 0 5px rgba(0,0,0,0.2);}
-  .modal {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;z-index:999;}
-  .modal-content {background:#fff;padding:1.5rem;border-radius:0.7rem;width:90%;max-width:400px;box-shadow:0 0 10px rgba(0,0,0,0.3);}
-  .modal-content h3 {margin-top:0;}
-  .modal-content label {display:block;margin-top:0.8rem;font-weight:bold;}
-  .modal-content input {width:100%;margin-top:0.3rem;padding:0.6rem;border:1px solid #ccc;border-radius:0.4rem;}
-  .modal-content button {width:100%;margin-top:1rem;background:#0072ff;color:#fff;border:none;padding:0.7rem;border-radius:0.4rem;font-weight:bold;cursor:pointer;}
-  .modal-content button:hover {background:#005dc0;}
-  .error {color:red;margin-top:0.5rem;font-size:0.9rem;}
-  .loading {position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;justify-content:center;align-items:center;z-index:9999;flex-direction:column;}
+  body {margin:0;font-family:sans-serif;background:#f4f9fd;color:#333;}
+  .navbar {background:linear-gradient(90deg,#00c6ff,#0072ff);display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;color:#fff;}
+  .navbar-left {display:flex;align-items:center;}
+  .logo-img {width:40px;height:40px;border-radius:50%;object-fit:cover;margin-right:0.5rem;}
+  .navbar h1 {margin:0;font-size:1.3rem;}
+  .settings-icon {width:28px;height:28px;cursor:pointer;filter:invert(1);}
+  .page {display:none;padding:2rem;}
+  button {padding:0.6rem 1rem;background:#0072ff;color:#fff;border:none;border-radius:0.4rem;cursor:pointer;}
+  button:hover {background:#005dc0;}
+  input {width:90%;max-width:400px;padding:0.5rem;margin:0.5rem 0;border:1px solid #ccc;border-radius:0.4rem;}
+  .product {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1rem;margin:1rem 0;}
+  .contact {text-align:center;margin:2rem 0;}
+  .contact a {display:inline-block;margin:0.3rem;padding:0.5rem 1rem;background:#0072ff;color:#fff;text-decoration:none;border-radius:0.4rem;}
+  .loading {position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
   .loading img {width:80px;height:80px;border-radius:50%;animation:spin 2s linear infinite;}
-  @keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-  .loading p {margin-top:1rem;color:#333;font-weight:bold;}
+  @keyframes spin {0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+  .password-container {background:#fff;border:1px solid #ddd;border-radius:0.5rem;padding:1.5rem;max-width:400px;margin:2rem auto;box-shadow:0 0 10px rgba(0,0,0,0.1);}
+  .password-container h2 {margin-top:0;}
 </style>
 </head>
 <body>
 
+<!-- Loading -->
 <div class="loading" id="loadingScreen">
-  <img src="https://files.catbox.moe/1fodlk.jpg" alt="Loading">
-  <p>Memuat...</p>
+  <img id="loadingPP" src="" alt="PP Loading">
+  <p>Loading...</p>
 </div>
 
-<header>
-  <h1>RiyanZx Store</h1>
-  <p>Jual beli digital murah & terpercaya</p>
-</header>
-
-<button class="admin-btn" onclick="openLogin()">
-  <img src="https://files.catbox.moe/1fodlk.jpg" alt="Admin" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;">
-</button>
-
-<div class="container" id="mainContent">
-  <section id="productsSection">
-    <h2>Produk</h2>
-    <div id="productList"></div>
-  </section>
-
-  <section class="payment">
-    <h2>Metode Pembayaran</h2>
-    <ul id="paymentList"></ul>
-  </section>
-
-  <section>
-    <h2>Kontak Admin</h2>
-    <div class="contact-buttons">
-      <a href="https://wa.me/6285793901218" target="_blank"><button>WhatsApp Testimoni</button></a>
-      <a href="https://t.me/RiyanZxDev" target="_blank"><button>Telegram</button></a>
-      <a href="https://whatsapp.com/channel/0029Vb61aq91HspunomeKm2j" target="_blank"><button>Saluran WhatsApp</button></a>
-    </div>
-  </section>
+<div class="navbar">
+  <div class="navbar-left">
+    <img id="navbarPP" src="" class="logo-img">
+    <h1>RiyanZx</h1>
+  </div>
+  <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" class="settings-icon" onclick="showAdminLogin()" alt="Setting">
 </div>
 
-<!-- Modal Login -->
-<div class="modal" id="loginModal">
-  <div class="modal-content">
-    <h3>Login Admin</h3>
-    <input type="password" id="adminPass" placeholder="Masukkan Password">
-    <div id="errorMsg" class="error"></div>
-    <button onclick="checkLogin()">Login</button>
-    <button style="background:#ccc;color:#333;" onclick="closeLogin()">Batal</button>
+<div class="page" id="dashboardPage" style="display:block;">
+  <h2>Selamat Datang!</h2>
+  <p>Website store digital kamu.</p>
+
+  <h3>Produk:</h3>
+  <div id="productsContainer"></div>
+
+  <h3>Pembayaran:</h3>
+  <div id="paymentsContainer"></div>
+
+  <div class="contact">
+    <a href="https://wa.me/6285793901218" target="_blank">WhatsApp</a>
+    <a href="https://t.me/RiyanZxDev" target="_blank">Telegram</a>
+    <a href="https://whatsapp.com/channel/0029Vb61aq91HspunomeKm2j" target="_blank">Saluran WA</a>
   </div>
 </div>
 
-<!-- Modal Admin Panel -->
-<div class="modal" id="adminModal">
-  <div class="modal-content">
-    <h3>Admin Panel</h3>
-    <input type="text" id="newProduct" placeholder="Nama Produk">
-    <input type="text" id="newPrice" placeholder="Harga">
-    <button onclick="addProduct()">Tambah Produk</button>
-    <hr>
-    <h3>Update Metode Pembayaran</h3>
-    <label for="dana">Dana</label>
-    <input type="text" id="dana">
-    <label for="ovo">OVO</label>
-    <input type="text" id="ovo">
-    <label for="gopay">GoPay</label>
-    <input type="text" id="gopay">
-    <label for="qris">QRIS (Link Gambar)</label>
-    <input type="text" id="qris">
-    <button onclick="updatePayments()">Simpan Pembayaran</button>
-    <button style="background:#ccc;color:#333;" onclick="closeAdmin()">Tutup Panel</button>
+<div class="page" id="adminLoginPage">
+  <div class="password-container">
+    <h2>Login Admin</h2>
+    <input type="password" id="adminPassword" placeholder="Masukkan Password">
+    <button onclick="checkAdminPassword()">Masuk Dashboard</button>
   </div>
+</div>
+
+<div class="page" id="adminPage">
+  <h2>Admin Dashboard</h2>
+
+  <h3>Setting Profil</h3>
+  <input type="text" id="profilePP" placeholder="URL Foto Profil">
+  <button onclick="saveProfile()">Simpan Foto Profil</button>
+
+  <h3>Kelola Produk</h3>
+  <div id="adminProducts"></div>
+  <h4>Tambah Produk Baru</h4>
+  <input type="text" id="newProdName" placeholder="Nama Produk">
+  <input type="text" id="newProdDesc" placeholder="Deskripsi">
+  <input type="number" id="newProdPrice" placeholder="Harga (Rp)">
+  <button onclick="addProduct()">Tambah Produk</button>
+
+  <h3>Kelola Pembayaran</h3>
+  <input type="text" id="payDana" placeholder="Nomor Dana">
+  <input type="text" id="payOVO" placeholder="Nomor OVO">
+  <input type="text" id="payGoPay" placeholder="Nomor GoPay">
+  <input type="text" id="payQRIS" placeholder="Link QRIS Gambar">
+  <button onclick="savePayments()">Simpan Pembayaran</button>
+
+  <h3>Ganti Password</h3>
+  <input type="password" id="newPassword" placeholder="Password Baru">
+  <button onclick="changePassword()">Ganti Password</button>
+  <br><br>
+  <button onclick="logout()">Keluar</button>
 </div>
 
 <script>
-window.onload = () => {
-  setTimeout(() => {
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'block';
-  }, 1500);
-};
-
-const products = [
-  {name:"Panel Unli 5K", price:"Rp5.000"},
-  {name:"Script Kayzen V5", price:"Rp15.000"}
+// Load dari localStorage
+let products=JSON.parse(localStorage.getItem("products"))||[
+  {name:"Panel Unli 5K",desc:"Panel unlimited murah meriah 🔥",price:5000},
+  {name:"Script Kayzen V5",desc:"Script bot WhatsApp premium",price:15000},
 ];
-let payments = {
-  dana: "0857-9390-1218",
-  ovo: "0857-9390-1218",
-  gopay: "0857-9390-1218",
-  qris: "https://files.catbox.moe/1fodlk.jpg"
+let payments=JSON.parse(localStorage.getItem("payments"))||{
+  Dana:"0857-9390-1218",
+  OVO:"0857-9390-1218",
+  GoPay:"0857-9390-1218",
+  QRIS:"https://files.catbox.moe/1fodlk.jpg"
 };
-const adminPass = "Killua";
+let profilePP=localStorage.getItem("profilePP")||"https://files.catbox.moe/1fodlk.jpg";
+let adminPassword=localStorage.getItem("adminPassword")||"Killua";
 
+// Loading screen
+window.onload=()=>{
+  document.getElementById('navbarPP').src=profilePP;
+  document.getElementById('loadingPP').src=profilePP;
+  setTimeout(()=>document.getElementById('loadingScreen').style.display='none',800);
+  showDashboard();
+};
+
+function hideAll(){document.querySelectorAll('.page').forEach(p=>p.style.display='none');}
+function showDashboard(){
+  hideAll();
+  document.getElementById('dashboardPage').style.display='block';
+  renderProducts();
+  renderPayments();
+}
+function showAdminLogin(){
+  hideAll();
+  document.getElementById('adminLoginPage').style.display='block';
+}
+function checkAdminPassword(){
+  if(document.getElementById('adminPassword').value===adminPassword){
+    hideAll();
+    document.getElementById('adminPage').style.display='block';
+    renderAdminProducts();
+    document.getElementById('payDana').value=payments.Dana;
+    document.getElementById('payOVO').value=payments.OVO;
+    document.getElementById('payGoPay').value=payments.GoPay;
+    document.getElementById('payQRIS').value=payments.QRIS;
+    document.getElementById('profilePP').value=profilePP;
+  }else{
+    alert('Password salah!');
+  }
+}
+function logout(){showDashboard();}
 function renderProducts(){
-  const list = document.getElementById("productList");
-  list.innerHTML = "";
-  products.forEach((p, i) => {
-    list.innerHTML += `
+  const c=document.getElementById('productsContainer');
+  c.innerHTML='';
+  products.forEach(p=>{
+    c.innerHTML+=`<div class="product"><h3>${p.name}</h3><p>${p.desc}</p><p><b>Rp${p.price}</b></p></div>`;
+  });
+}
+function renderPayments(){
+  const c=document.getElementById('paymentsContainer');
+  c.innerHTML=`
+    <p><b>Dana:</b> ${payments.Dana}</p>
+    <p><b>OVO:</b> ${payments.OVO}</p>
+    <p><b>GoPay:</b> ${payments.GoPay}</p>
+    <p><b>QRIS:</b><br><img src="${payments.QRIS}" style="width:120px;"></p>`;
+}
+function renderAdminProducts(){
+  const c=document.getElementById('adminProducts');
+  c.innerHTML='';
+  products.forEach((p,i)=>{
+    c.innerHTML+=`
       <div class="product">
-        <h3>${p.name}</h3>
-        <p><b>Harga:</b> ${p.price}</p>
+        <input value="${p.name}" onchange="editProduct(${i},'name',this.value)">
+        <input value="${p.desc}" onchange="editProduct(${i},'desc',this.value)">
+        <input type="number" value="${p.price}" onchange="editProduct(${i},'price',this.value)">
         <button onclick="deleteProduct(${i})">Hapus</button>
       </div>`;
   });
 }
-
-function renderPayments(){
-  const list = document.getElementById("paymentList");
-  list.innerHTML = `
-    <li><b>Dana:</b> ${payments.dana}</li>
-    <li><b>OVO:</b> ${payments.ovo}</li>
-    <li><b>GoPay:</b> ${payments.gopay}</li>
-    <li><b>QRIS:</b><br><img src="${payments.qris}" alt="QRIS" style="width:120px;"></li>`;
+function editProduct(i,k,v){
+  products[i][k]=k==='price'?parseInt(v):v;
+  saveAll();
+  renderAdminProducts();
 }
-
-renderProducts();
-renderPayments();
-
-function openLogin(){document.getElementById("loginModal").style.display="flex";document.getElementById("errorMsg").innerText="";}
-function closeLogin(){document.getElementById("loginModal").style.display="none";}
-function openAdmin(){
-  document.getElementById("adminModal").style.display="flex";
-  document.getElementById("dana").value = payments.dana;
-  document.getElementById("ovo").value = payments.ovo;
-  document.getElementById("gopay").value = payments.gopay;
-  document.getElementById("qris").value = payments.qris;
-}
-function closeAdmin(){document.getElementById("adminModal").style.display="none";}
-
-function checkLogin(){
-  const pass = document.getElementById("adminPass").value;
-  if(pass === adminPass){
-    closeLogin();
-    openAdmin();
-  } else {
-    document.getElementById("errorMsg").innerText = "❌ Password salah. Coba lagi.";
-  }
-}
-
-function addProduct(){
-  const name = document.getElementById("newProduct").value.trim();
-  const price = document.getElementById("newPrice").value.trim();
-  if(name && price){
-    products.push({name, price});
-    renderProducts();
-    document.getElementById("newProduct").value="";
-    document.getElementById("newPrice").value="";
-  } else {
-    alert("Lengkapi semua field produk!");
-  }
-}
-
 function deleteProduct(i){
-  if(confirm("Hapus produk ini?")){
-    products.splice(i, 1);
-    renderProducts();
-  }
+  products.splice(i,1);
+  saveAll();
+  renderAdminProducts();
 }
-
-function updatePayments(){
-  payments.dana = document.getElementById("dana").value.trim();
-  payments.ovo = document.getElementById("ovo").value.trim();
-  payments.gopay = document.getElementById("gopay").value.trim();
-  payments.qris = document.getElementById("qris").value.trim();
-  renderPayments();
-  alert("✅ Metode pembayaran diperbarui!");
+function addProduct(){
+  const n=document.getElementById('newProdName').value,d=document.getElementById('newProdDesc').value,p=document.getElementById('newProdPrice').value;
+  if(!n||!d||!p){alert('Lengkapi semua field!');return;}
+  products.push({name:n,desc:d,price:parseInt(p)});
+  document.getElementById('newProdName').value='';
+  document.getElementById('newProdDesc').value='';
+  document.getElementById('newProdPrice').value='';
+  saveAll();
+  renderAdminProducts();
+}
+function savePayments(){
+  payments.Dana=document.getElementById('payDana').value;
+  payments.OVO=document.getElementById('payOVO').value;
+  payments.GoPay=document.getElementById('payGoPay').value;
+  payments.QRIS=document.getElementById('payQRIS').value;
+  saveAll();
+  alert('Pembayaran disimpan!');
+}
+function saveProfile(){
+  profilePP=document.getElementById('profilePP').value;
+  localStorage.setItem("profilePP",profilePP);
+  document.getElementById('navbarPP').src=profilePP;
+  document.getElementById('loadingPP').src=profilePP;
+  alert('Foto profil disimpan!');
+}
+function changePassword(){
+  const newPass=document.getElementById('newPassword').value;
+  if(!newPass){alert('Password baru tidak boleh kosong!');return;}
+  adminPassword=newPass;
+  localStorage.setItem("adminPassword",adminPassword);
+  alert('Password berhasil diganti!');
+}
+function saveAll(){
+  localStorage.setItem("products",JSON.stringify(products));
+  localStorage.setItem("payments",JSON.stringify(payments));
 }
 </script>
 </body>
